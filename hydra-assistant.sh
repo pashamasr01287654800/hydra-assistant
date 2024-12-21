@@ -4,9 +4,15 @@
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[0;33m'
+CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
-echo -e "${YELLOW}Welcome to the Hydra Script Helper!${NC}"
+echo -e "${YELLOW}==============================================${NC}"
+echo -e "${CYAN}             WELCOME TO HYDRA                 ${NC}"
+echo -e "${GREEN}Unleash the Power of Brute-Force Precision!  ${NC}"
+echo -e "${RED}Shatter Defenses. Expose Vulnerabilities. Dominate the Digital World. ${NC}"
+echo -e "${YELLOW}==============================================${NC}"
+echo
 
 # Request target IP
 while true; do
@@ -23,7 +29,7 @@ read -p "Enter the target port (leave empty for default): " target_port
 
 # Display supported protocols
 services=("ftp" "ssh" "telnet" "smtp" "http-get" "http-post" "https-get" "https-post" "http-get-form" "https-get-form" "http-post-form" "https-post-form" "mysql" "vnc" "rdp" "ldap" "smb" "imap" "pop3" "sftp")
-echo -e "${YELLOW}Select the protocol you want to use:${NC}"
+echo "Select the protocol you want to use:"
 for i in "${!services[@]}"; do
     echo "$((i+1))) ${services[i]}"
 done
@@ -73,7 +79,7 @@ esac
 
 # Request username or username file
 while true; do
-    echo -e "${YELLOW}How would you like to specify usernames?${NC}"
+    echo "How would you like to specify usernames?"
     echo "1) Enter a username manually"
     echo "2) Use a file containing usernames"
     read -p "Enter your choice (1/2): " username_choice
@@ -101,7 +107,7 @@ done
 
 # Request password or password file
 while true; do
-    echo -e "${YELLOW}How would you like to specify passwords?${NC}"
+    echo "How would you like to specify passwords?"
     echo "1) Enter a password manually"
     echo "2) Use a file containing passwords"
     read -p "Enter your choice (1/2): " password_choice
@@ -145,11 +151,21 @@ while true; do
     esac
 done
 
+# Ask the user about the guess type (same as login, null, reverse login)
+while true; do
+    read -p "If you want to test for passwords (s)ame as login, (n)ull or (r)everse login, enter these letters without spaces (e.g. 'sr') or leave empty otherwise: " guess_type
+    if [[ "$guess_type" =~ ^[snr]*$ ]]; then
+        break
+    else
+        echo -e "${RED}Invalid input. Please enter only 's', 'n', 'r' without spaces, or leave empty.${NC}"
+    fi
+done
+
 # Ask the user about the -t option (attempts per second)
 while true; do
     read -p "Enter the number of attempts per second (-t option, e.g., 10): " attempts_per_second
     if [[ -z $attempts_per_second ]]; then
-        #If the user leaves the field blank, -t is not added
+        # If the user leaves the field blank, -t is not added
         break
     elif [[ ! $attempts_per_second =~ ^[0-9]+$ ]] || [ "$attempts_per_second" -le 0 ]; then
         echo -e "${RED}Please enter a valid positive integer.${NC}"
@@ -173,10 +189,11 @@ else
     hydra_command+="-P $password_file "
 fi
 
-hydra_command+="-u -e nsr "
+hydra_command+="-u "
 
-if [[ -n $target_port ]]; then
-    hydra_command+="-s $target_port "
+# Add the guess type based on user's input (add "-e" only if $guess_type is not empty)
+if [[ -n $guess_type ]]; then
+    hydra_command+="-e $guess_type "
 fi
 
 # Add the -V option based on the user's choice
