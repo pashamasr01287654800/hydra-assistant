@@ -1,4 +1,4 @@
-# hydra-assistant.sh
+# hydra-assistant
 
 hydra-assistant.sh is an interactive Bash script designed to simplify the process of using Hydra, a powerful brute-force tool for password cracking. This script provides a user-friendly interface for building and executing Hydra commands, making it easier for penetration testers and security researchers to test authentication mechanisms across various protocols.
 
